@@ -344,18 +344,18 @@ class Chosen extends AbstractChosen
     this.results_reset_cleanup()
     @form_field_jq.trigger "change"
     this.results_hide() if @active_field
-  
+
   results_reset_cleanup: ->
     @selected_item.find("abbr").remove()
 
   result_select: (evt) ->
     if @result_highlight
       high = @result_highlight
-      
+
       if high.hasClass 'create-option'
         this.select_create_option(@search_field.val())
         return this.results_hide()
-      
+
       high_id = high.attr "id"
 
       this.result_clear_highlight()
@@ -423,9 +423,9 @@ class Chosen extends AbstractChosen
     regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i')
     zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i')
     eregex = new RegExp('^' + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + '$', 'i')
-    
+
     exact_result = false
-    
+
     for option in @results_data
       if not option.disabled and not option.empty
         if option.group
@@ -440,8 +440,8 @@ class Chosen extends AbstractChosen
             results += 1
             if eregex.test option.html
               exact_result = true
-            
-            
+
+
           else if option.html.indexOf(" ") >= 0 or option.html.indexOf("[") == 0
             #TODO: replace this substitution of /\[\]/ with a list of characters to skip.
             parts = option.html.replace(/\[|\]/g, "").split(" ")
@@ -469,6 +469,7 @@ class Chosen extends AbstractChosen
 
     if results < 1 and searchText.length
       this.no_results searchText
+      @winnow_results_set_highlight()
     else
       this.show_create_option( searchText ) if @create_option and not exact_result and @persistent_create_option and searchText.length
       this.winnow_results_set_highlight()
@@ -485,29 +486,31 @@ class Chosen extends AbstractChosen
         this.result_activate li
 
   winnow_results_set_highlight: ->
-    if not @result_highlight
+    # if not @result_highlight
 
-      selected_results = if not @is_multiple then @search_results.find(".result-selected.active-result") else []
-      do_high = if selected_results.length then selected_results.first() else @search_results.find(".active-result").first()
+    selected_results = if not @is_multiple then @search_results.find(".result-selected.active-result") else []
+    do_high = if selected_results.length then selected_results.first() else @search_results.find(".active-result").first()
 
-      this.result_do_highlight do_high if do_high?
+    this.result_do_highlight do_high if do_high?
 
   no_results: (terms) ->
     no_results_html = $('<li class="no-results">' + @results_none_found + ' "<span></span>"</li>')
     no_results_html.find("span").first().html(terms)
-    
-    @search_results.append no_results_html
-    
+
+    # @search_results.append no_results_html
+
     if @create_option #and not selected
-      this.show_create_option( terms )
+      @show_create_option( terms )
+    else
+      @search_results.append no_results_html
 
   show_create_option: (terms) ->
     create_option_html = $('<li class="create-option active-result"><a href="javascript:void(0);">' + @create_option_text + '</a>: "' + terms + '"</li>').bind "click", (evt) => this.select_create_option(terms)
     @search_results.append create_option_html
-    
+
   create_option_clear: ->
     @search_results.find(".create-option").remove()
-    
+
   select_create_option: (terms) ->
     if $.isFunction(@create_option)
       @create_option.call this, terms
@@ -520,7 +523,7 @@ class Chosen extends AbstractChosen
     @form_field_jq.trigger "liszt:updated"
     #@active_field = false
     @search_field.trigger('focus')
-  
+
   no_results_clear: ->
     @search_results.find(".no-results").remove()
 
