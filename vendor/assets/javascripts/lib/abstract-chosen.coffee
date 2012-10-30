@@ -27,7 +27,8 @@ class AbstractChosen
     @results_showing = false
     @result_highlighted = null
     @result_single_selected = null
-    @allow_single_deselect = if @options.allow_single_deselect? and @form_field.options[0]? and @form_field.options[0].text is "" then @options.allow_single_deselect else false
+    # @allow_single_deselect = if @options.allow_single_deselect? and @form_field.options[0]? and @form_field.options[0].text is "" then @options.allow_single_deselect else false
+    @allow_single_deselect = if @options.allow_single_deselect? then @options.allow_single_deselect else false
     @disable_search_threshold = @options.disable_search_threshold || 0
     @search_contains = @options.search_contains || false
     @choices = 0
